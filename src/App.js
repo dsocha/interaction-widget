@@ -1,5 +1,7 @@
 import queryString from "query-string";
 import "./App.css";
+import "antd/dist/antd.css";
+import ConversationDetails from "./Components/ClientAppSdk/ClientAppSdk";
 
 function App() {
   const env = queryString.parse(window.location.search).env;
@@ -13,13 +15,7 @@ function App() {
           Expected query string params are not present: env, cid
         </p>
       )}
-      {env && cid && (
-        <div className="App">
-          <h1>Hello :-)</h1>
-          <h5>{env}</h5>
-          <h5>{cid}</h5>
-        </div>
-      )}
+      {env && cid && <ConversationDetails cid={cid} />}
     </div>
   );
 }

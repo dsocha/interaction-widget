@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <style>
+      .loader-outer {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        text-align: center;
+        padding-top: 50px;
+      }
+
+      .loader {
+        border: 4px solid #eeeeee;
+        border-top: 4px solid #888888;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 2s linear infinite;
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      // =====================================================================================================
+      //  This script allows to get authorised in PureCloud.
+      //    It expects 3 GET parameters to be provided:
+      //      en - environment, e.g. mypurecloud.ie
+      //      ci - client id of an oAuth2 app configured in PureCloud (Implicit Grant)
+      //      ta - target page - where to transfer the web-visitor if the security token is obtained
+      //  Once the authorisation token is obtained, it is saved into a local storage variable.
+      //
+      //  The script can be used as a content of logon window that is diplsayed in the iFrame of a main page.
+      //  This way of authorisation gives better user expirience becouse tha main page is not reloaded.
+      // =====================================================================================================
+      var url = new URL(window.location.href);
+      if (url.href.includes("access_token")) {
+        console.log("Token detected in the URL: " + url);
+        var token = url.href.split("access_token=")[1].split("&expires_in")[0];
+        console.log("Extracted token: " + token);
+        sessionStorage.setItem("purecloud_token", token);
+        var ta = sessionStorage.getItem("target_page");
+        if (!ta) {
+          console.log("target_page not present, no action will be taken");
+        } else {
+          console.log(`target_page=[${ta}], redirecting`);
+          window.location.href = ta;
+        }
+      } else {
+        var en = url.searchParams.get("en");
+        var ci = url.searchParams.get("ci");
+        var ta = url.searchParams.get("ta");
+        var re = url.href.split("?")[0];
+        console.log("en: " + en);
+        console.log("ci: " + ci);
+        console.log("ta: " + ta);
+        console.log("re: " + re);
+        if (en === null || ci === null) {
+          console.log("NO NECESSARY DATA");
+        } else {
+          if (ta !== null) {
+            sessionStorage.setItem("target_page", ta);
+          }
+          window.location.href = `https://login.${en}/oauth/authorize?client_id=${ci}&redirect_uri=${re}&response_type=token`;
+        }
+      }
+    </script>
+    <div class="loader-outer">
+      <div class="loader"></div>
+    </div>
+  </body>
+</html>
