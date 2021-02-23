@@ -6,21 +6,23 @@ import ClientAppSdk from './Components/ClientAppSdk/ClientAppSdk';
 import PlatformApi from './Components/PlatformApi/PlatformApi';
 import Notifications from './Components/Notifications/Notifications';
 import { Alert, Spin } from 'antd';
-import { setEnv, setCid, getMe } from './Misc/api';
+import { setEnv, setCid, setOau, getMe } from './Misc/api';
 import { initializeNotifications, registerCallbackFunctionForUserTargets } from './Misc/notifications';
 
 function App() {
   const env = queryString.parse(window.location.search).env;
   const cid = queryString.parse(window.location.search).cid;
+  const oau = queryString.parse(window.location.search).oau;
 
   const [me, setMe] = useState(null);
   const [presence, setPresence] = useState('NOT CHANGED YET');
 
   useEffect(() => {
-    if (env && cid) {
+    if (env && cid && oau) {
       if (!me) {
         setEnv(env);
         setCid(cid);
+        setOau(oau);
         loadGetMe();
       } else {
         startWatchingUserPresence();
@@ -47,8 +49,8 @@ function App() {
   return (
     <div className='main-container'>
       <>
-        {(!env || !cid) && <Alert message='Oops, it does not look good :-(' description={<>Expected query string params are not present: env, cid</>} type='error' showIcon />}
-        {env && cid && (
+        {(!env || !cid || !oau) && <Alert message='Oops, it does not look good :-(' description={<>Expected query string params are not present: env, cid, oau</>} type='error' showIcon />}
+        {env && cid && oau && (
           <>
             {!me && (
               <div className='center' style={{ marginTop: '50px' }}>
