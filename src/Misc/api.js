@@ -37,20 +37,3 @@ export const getMe = async () => {
     throw error;
   }
 };
-
-export const getConversation = async (cid) => {
-  const gcToken = getToken();
-  try {
-    const resp = await fetch(`https://api.${apiEnv}/api/v2/users/me`, {
-      method: 'GET',
-      headers: {
-        Authorization: `bearer ${gcToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    return handleResponse(resp);
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
