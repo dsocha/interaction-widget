@@ -27,9 +27,79 @@ export const getMe = async () => {
     const resp = await fetch(`https://api.${apiEnv}/api/v2/users/me`, {
       method: 'GET',
       headers: {
-        Authorization: `bearer ${gcToken}`,
+        Authorization: `bearer ${getToken()}`,
         'Content-Type': 'application/json',
       },
+    });
+    return handleResponse(resp);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getNotificationChannel = async () => {
+  const gcToken = getToken();
+  try {
+    const resp = await fetch(`https://api.${apiEnv}/api/v2/users/me`, {
+      method: 'GET',
+      headers: {
+        Authorization: `bearer ${getToken()}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(resp);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const notificationsGetChannels = async () => {
+  const gcToken = getToken();
+  try {
+    const resp = await fetch(`https://api.${apiEnv}/api/v2/notifications/channels`, {
+      method: 'GET',
+      headers: {
+        Authorization: `bearer ${getToken()}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(resp);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const notificationsPostChannels = async () => {
+  const gcToken = getToken();
+  try {
+    const resp = await fetch(`https://api.${apiEnv}/api/v2/notifications/channels`, {
+      method: 'POST',
+      headers: {
+        Authorization: `bearer ${getToken()}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+    return handleResponse(resp);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const notificationsPutChannelsSubscriptions = async (channelId, body) => {
+  const gcToken = getToken();
+  try {
+    const resp = await fetch(`https://api.${apiEnv}/api/v2/notifications/channels/${channelId}/subscriptions`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `bearer ${getToken()}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
     return handleResponse(resp);
   } catch (error) {
