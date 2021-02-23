@@ -31,7 +31,7 @@ export const getMe = async () => {
         'Content-Type': 'application/json',
       },
     });
-    handleResponse(resp);
+    return handleResponse(resp);
   } catch (error) {
     console.error(error);
     throw error;

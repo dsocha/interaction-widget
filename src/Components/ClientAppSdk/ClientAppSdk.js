@@ -19,11 +19,16 @@ const ConversationDetails = (props) => {
     myClientApp.myConversations.showInteractionDetails(props.cid);
   };
 
+  const handleBtnUserProfile = () => {
+    myClientApp.users.showProfile(props.uid);
+  };
+
   return (
     <Card title='ClientApp SDK'>
       <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <Button onClick={handleBtnShowToast}>Show toast</Button>
         <Button onClick={handleBtnConversationDetails}>Show conversation</Button>
+        <Button onClick={handleBtnUserProfile}>Show profile</Button>
       </div>
     </Card>
   );
@@ -31,6 +36,7 @@ const ConversationDetails = (props) => {
 
 ConversationDetails.propTypes = {
   cid: PropTypes.string.isRequired,
+  uid: PropTypes.string.isRequired,
 };
 
 export default ConversationDetails;
