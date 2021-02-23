@@ -1,25 +1,27 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ClientApp from 'purecloud-client-app-sdk';
 import { Card, Button } from 'antd';
 
-const ConversationDetails = (props) => {
-  let myClientApp = null;
-  useEffect(() => {
-    myClientApp = new ClientApp({
+const ClientAppSdk = (props) => {
+  const handleBtnShowToast = () => {
+    const myClientApp = new ClientApp({
       pcEnvironmentQueryParam: 'env',
     });
-  }, []);
-
-  const handleBtnShowToast = () => {
     myClientApp.alerting.showToastPopup('Interaction widget', "Hello, what's up?");
   };
 
   const handleBtnConversationDetails = () => {
+    const myClientApp = new ClientApp({
+      pcEnvironmentQueryParam: 'env',
+    });
     myClientApp.myConversations.showInteractionDetails(props.cid);
   };
 
   const handleBtnUserProfile = () => {
+    const myClientApp = new ClientApp({
+      pcEnvironmentQueryParam: 'env',
+    });
     myClientApp.users.showProfile(props.uid);
   };
 
@@ -34,9 +36,9 @@ const ConversationDetails = (props) => {
   );
 };
 
-ConversationDetails.propTypes = {
+ClientAppSdk.propTypes = {
   cid: PropTypes.string.isRequired,
   uid: PropTypes.string.isRequired,
 };
 
-export default ConversationDetails;
+export default ClientAppSdk;
