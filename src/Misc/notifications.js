@@ -9,10 +9,10 @@ let callbackFunctionForUserTargets = (presence) => {
 export const initializeNotifications = async (uid) => {
   try {
     const channels = await notificationsGetChannels();
-    if (!Array.isArray(channels) || channels.length === 0) {
+    if (!Array.isArray(channels.entities) || channels.entities.length === 0) {
       currentChannel = await notificationsPostChannels();
     } else {
-      currentChannel = channels[0];
+      currentChannel = channels.entities[0];
     }
     await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.users.${uid}.presence`]);
     initializeWebSocket();

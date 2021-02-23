@@ -5,3 +5,31 @@
 .center {
   text-align: center;
 }
+
+.ant-card-head {
+  padding: 10px !important;
+  background-color: #33393d !important;
+  color: #9baab8 !important;
+}
+
+.ant-card-head-title {
+  padding: 0 !important;
+}
+
+.ant-card-body {
+  padding: 10px !important;
+  background-color: #f6f6f6 !important;
+}
+
+.blink {
+  animation: blink-anim 0.3s infinite;
+}
+
+@keyframes blink-anim {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

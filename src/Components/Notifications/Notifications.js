@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Card } from 'antd';
+import { Card, Alert } from 'antd';
 
 const Notifications = (props) => {
+  const [presenceClass, setPresenceClass] = useState('');
+
+  useEffect(() => {
+    setPresenceClass('blink');
+    setTimeout(() => {
+      setPresenceClass('');
+    }, 900);
+  }, [props.presence]);
+
   return (
     <Card title='Notifications' style={{ marginTop: '20px' }}>
       User presence
-      <div style={{ overflow: 'auto', height: '50px', backgroundColor: '#f5f5f5', border: '1px solid #dddddd', borderRadius: '5px', padding: '10px' }}>{props.presence}</div>
+      <Alert className={presenceClass} message={props.presence} type='info' />
     </Card>
   );
 };
