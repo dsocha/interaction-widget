@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import queryString from 'query-string';
 import './App.css';
 import 'antd/dist/antd.css';
-import ConversationDetails from './Components/ClientAppSdk/ClientAppSdk';
+import ClientAppSdk from './Components/ClientAppSdk/ClientAppSdk';
 import { Alert } from 'antd';
 import { setEnv, setCid, getMe } from './Misc/api';
 
@@ -36,7 +36,7 @@ function App() {
         {env && cid && (
           <>
             {!me && <>LOADING</>}
-            {me && <ConversationDetails cid={cid} uid={me.id} />}
+            {me && <ClientAppSdk cid={cid} uid={me.id} />}
           </>
         )}
       </>
