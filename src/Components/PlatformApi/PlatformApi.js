@@ -6,6 +6,7 @@ import { Card, Button } from 'antd';
 const PlatformApi = (props) => {
   return (
     <Card title='Platform API' style={{ marginTop: '20px' }}>
+      /api/v2/users/me
       <div style={{ overflow: 'auto', maxHeight: '300px', backgroundColor: '#f5f5f5', border: '1px solid #dddddd', borderRadius: '5px', padding: '10px' }}>
         <ReactJson src={props.jsonObj} />
       </div>
