@@ -51,7 +51,7 @@
         console.log("Token detected in the URL: " + url);
         var token = url.href.split("access_token=")[1].split("&expires_in")[0];
         console.log("Extracted token: " + token);
-        sessionStorage.setItem("purecloud_token", token);
+        sessionStorage.setItem("gc.token", token);
         var ta = sessionStorage.getItem("target_page");
         if (!ta) {
           console.log("target_page not present, no action will be taken");
