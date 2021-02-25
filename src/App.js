@@ -2,12 +2,9 @@ import './App.css';
 import 'antd/dist/antd.css';
 import React, { useEffect, useState } from 'react';
 import queryString from 'query-string';
-import ClientAppSdk from './Components/ClientAppSdk/ClientAppSdk';
-import PlatformApi from './Components/PlatformApi/PlatformApi';
-import Notifications from './Components/Notifications/Notifications';
+import ChatMsgs from './Components/ChatMsgs/ChatMsgs';
 import { Alert, Spin } from 'antd';
 import { setEnv, setCid, setOau, getMe } from './Misc/api';
-import { initializeNotifications, registerCallbackFunctionForUserTargets } from './Misc/notifications';
 
 function App() {
   const env = queryString.parse(window.location.search).env;
@@ -15,7 +12,7 @@ function App() {
   const oau = queryString.parse(window.location.search).oau;
 
   const [me, setMe] = useState(null);
-  const [presence, setPresence] = useState('NOT CHANGED YET');
+  // const [presence, setPresence] = useState('NOT CHANGED YET');
 
   useEffect(() => {
     if (env && cid && oau) {
@@ -25,7 +22,7 @@ function App() {
         setOau(oau);
         loadGetMe();
       } else {
-        startWatchingUserPresence();
+        //
       }
     }
   }, [me]);
@@ -37,13 +34,6 @@ function App() {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const startWatchingUserPresence = async () => {
-    registerCallbackFunctionForUserTargets((p) => {
-      setPresence(p);
-    });
-    await initializeNotifications(me.id);
   };
 
   return (
@@ -59,9 +49,7 @@ function App() {
             )}
             {me && (
               <>
-                <ClientAppSdk cid={cid} uid={me.id} />
-                <PlatformApi jsonObj={me} />
-                <Notifications presence={presence} />
+                <ChatMsgs cid={cid} />
               </>
             )}
           </>

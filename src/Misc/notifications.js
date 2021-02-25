@@ -2,11 +2,12 @@ import { notificationsGetChannels, notificationsPutChannelsSubscriptions, notifi
 
 let ws;
 let currentChannel;
-let callbackFunctionForUserTargets = (presence) => {
-  console.error('callbackFunctionForUserTargets not registered yet');
+
+let callbackFunctionForChatMessages = (msg) => {
+  console.error('callbackFunctionForChatMessages not registered yet');
 };
 
-export const initializeNotifications = async (uid) => {
+export const initializeNotificationsChatMessages = async (cid) => {
   try {
     const channels = await notificationsGetChannels();
     if (!Array.isArray(channels.entities) || channels.entities.length === 0) {
@@ -14,7 +15,7 @@ export const initializeNotifications = async (uid) => {
     } else {
       currentChannel = channels.entities[0];
     }
-    await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.users.${uid}.presence`]);
+    await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.conversations.chats.${cid}.messages`]);
     initializeWebSocket();
   } catch (err) {
     console.error(err);
@@ -31,13 +32,11 @@ const initializeWebSocket = () => {
   };
   ws.onmessage = (e) => {
     const msg = JSON.parse(e.data);
-    if (msg.topicName.includes('v2.users.') && msg.topicName.includes('.presence')) {
-      // <user presence>
-      const presence = msg.eventBody.presenceDefinition.systemPresence;
-      if (presence) {
-        callbackFunctionForUserTargets(presence);
+    console.log('dddd', msg);
+    if (msg.topicName.includes('v2.conversations.chats.') && msg.topicName.includes('.messages')) {
+      if (msg.eventBody.bodyType === 'standard') {
+        callbackFunctionForChatMessages(msg.eventBody.body);
       }
-      // </user presence>
     }
   };
 
@@ -51,6 +50,6 @@ const initializeWebSocket = () => {
   };
 };
 
-export const registerCallbackFunctionForUserTargets = (func) => {
-  callbackFunctionForUserTargets = func;
+export const registerCallbackFunctionForChatMessages = (func) => {
+  callbackFunctionForChatMessages = func;
 };
