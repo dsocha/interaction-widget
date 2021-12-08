@@ -1,11 +1,9 @@
 import { getToken } from './sessionStorage';
 
 var apiEnv = null;
-var apiCid = null;
 var apiOau = null;
 
 export const setEnv = (v) => (apiEnv = v);
-export const setCid = (v) => (apiCid = v);
 export const setOau = (v) => (apiOau = v);
 
 const handleResponse = (response) => {
@@ -17,7 +15,7 @@ const handleResponse = (response) => {
 const handleError = (resp) => {
   console.error('API call failed: [' + resp.status + '] ' + resp.statusText);
   if (resp.status === 401) {
-    window.location.href = `login.html?en=${apiEnv}&ci=${apiOau}&ta=${encodeURIComponent(`/?env=${apiEnv}&cid=${apiCid}`)}`;
+    window.location.href = `login.html?en=${apiEnv}&ci=${apiOau}&ta=${encodeURIComponent(`/?env=${apiEnv}`)}`;
     return;
   }
   throw new Error(resp.statsuText);

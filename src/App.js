@@ -1,27 +1,29 @@
 import './App.css';
 import 'antd/dist/antd.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import queryString from 'query-string';
-import ClientAppSdk from './Components/ClientAppSdk/ClientAppSdk';
-import PlatformApi from './Components/PlatformApi/PlatformApi';
-import Notifications from './Components/Notifications/Notifications';
-import { Alert, Spin } from 'antd';
-import { setEnv, setCid, setOau, getMe } from './Misc/api';
+// import ClientAppSdk from './Components/ClientAppSdk/ClientAppSdk';
+// import PlatformApi from './Components/PlatformApi/PlatformApi';
+// import Notifications from './Components/Notifications/Notifications';
+import ActivitySelection from './Components/ActivitySelection/ActivitySelection';
+import { Alert, Spin, Table } from 'antd';
+import { setEnv, setOau, getMe } from './Misc/api';
 import { initializeNotifications, registerCallbackFunctionForUserTargets } from './Misc/notifications';
+import moment from 'moment';
+
+var trackingData1 = [];
 
 function App() {
   const env = queryString.parse(window.location.search).env;
-  const cid = queryString.parse(window.location.search).cid;
   const oau = queryString.parse(window.location.search).oau;
 
   const [me, setMe] = useState(null);
-  const [presence, setPresence] = useState('NOT CHANGED YET');
+  const [trackingData, setTrackingData] = useState([]);
 
   useEffect(() => {
-    if (env && cid && oau) {
+    if (env && oau) {
       if (!me) {
         setEnv(env);
-        setCid(cid);
         setOau(oau);
         loadGetMe();
       } else {
@@ -40,17 +42,55 @@ function App() {
   };
 
   const startWatchingUserPresence = async () => {
-    registerCallbackFunctionForUserTargets((p) => {
-      setPresence(p);
-    });
+    registerCallbackFunctionForUserTargets(presenceCallbackFunc);
     await initializeNotifications(me.id);
+  };
+
+  const presenceCallbackFunc = useCallback((v) => {
+    console.log('[Activity Widget] prsence changed:', v);
+    addTrackingData('Presence', v);
+  });
+
+  const handleActivityChange = (v) => {
+    console.log('[Activity Widget] activity changed:', v);
+    addTrackingData('Activity', v);
+  };
+
+  const columns = [
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+      width: 100,
+      // render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'Value',
+      dataIndex: 'value',
+      key: 'value',
+      align: 'left',
+    },
+    {
+      title: 'When',
+      dataIndex: 'when',
+      key: 'when',
+      align: 'right',
+      render: (when) => <>{when.format('LTS')}</>,
+    },
+  ];
+
+  const addTrackingData = (type, value) => {
+    console.log('[Activity Widget] addTrackingData():', type, value);
+    let td = [{ type, value, when: moment() }].concat([...trackingData1]);
+    trackingData1 = td;
+    setTrackingData(td);
   };
 
   return (
     <div className='main-container'>
       <>
-        {(!env || !cid || !oau) && <Alert message='Oops, it does not look good :-(' description={<>Expected query string params are not present: env, cid, oau</>} type='error' showIcon />}
-        {env && cid && oau && (
+        {(!env || !oau) && <Alert message='Oops, it does not look good :-(' description={<>Expected query string params are not present: env, oau</>} type='error' showIcon />}
+        {env && oau && (
           <>
             {!me && (
               <div className='center' style={{ marginTop: '50px' }}>
@@ -59,9 +99,14 @@ function App() {
             )}
             {me && (
               <>
-                <ClientAppSdk cid={cid} uid={me.id} />
-                <PlatformApi jsonObj={me} />
-                <Notifications presence={presence} />
+                <div>
+                  Activity:
+                  <ActivitySelection onActivityChange={handleActivityChange} />
+                </div>
+                <div style={{ marginTop: '24px' }}>
+                  History:
+                  <Table columns={columns} dataSource={trackingData} />
+                </div>
               </>
             )}
           </>
