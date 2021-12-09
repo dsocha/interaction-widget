@@ -47,32 +47,32 @@
       //  This way of authorisation gives better user expirience becouse tha main page is not reloaded.
       // =====================================================================================================
       var url = new URL(window.location.href);
-      if (url.href.includes("access_token")) {
-        console.log("Token detected in the URL: " + url);
-        var token = url.href.split("access_token=")[1].split("&expires_in")[0];
-        console.log("Extracted token: " + token);
-        sessionStorage.setItem("gc.token", token);
-        var ta = sessionStorage.getItem("target_page");
+      if (url.href.includes('access_token')) {
+        console.log('Token detected in the URL: ' + url);
+        var token = url.href.split('access_token=')[1].split('&expires_in')[0];
+        console.log('Extracted token: ' + token);
+        sessionStorage.setItem('gc.token', token);
+        var ta = sessionStorage.getItem('target_page');
         if (!ta) {
-          console.log("target_page not present, no action will be taken");
+          console.log('target_page not present, no action will be taken');
         } else {
           console.log(`target_page=[${ta}], redirecting`);
           window.location.href = ta;
         }
       } else {
-        var en = url.searchParams.get("en");
-        var ci = url.searchParams.get("ci");
-        var ta = url.searchParams.get("ta");
-        var re = url.href.split("?")[0];
-        console.log("en: " + en);
-        console.log("ci: " + ci);
-        console.log("ta: " + ta);
-        console.log("re: " + re);
+        var en = url.searchParams.get('en');
+        var ci = url.searchParams.get('ci');
+        var ta = url.searchParams.get('ta');
+        var re = url.href.split('?')[0];
+        console.log('en: ' + en);
+        console.log('ci: ' + ci);
+        console.log('ta: ' + ta);
+        console.log('re: ' + re);
         if (en === null || ci === null) {
-          console.log("NO NECESSARY DATA");
+          console.log('NO NECESSARY DATA');
         } else {
           if (ta !== null) {
-            sessionStorage.setItem("target_page", ta);
+            sessionStorage.setItem('target_page', ta);
           }
           window.location.href = `https://login.${en}/oauth/authorize?client_id=${ci}&redirect_uri=${re}&response_type=token`;
         }
