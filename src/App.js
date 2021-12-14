@@ -57,15 +57,16 @@ function App() {
   const conversationCallbackFunc1 = (v) => {
     console.log('[Activity Widget] conversation changed:', v);
     if (!v.participants) return;
-    const p = v.participants.find((x) => x.purpose === 'agent' && !x.endTime);
+    let p = v.participants.find((x) => x.purpose === 'agent' && !x.endTime); // connected one
+    if (!p) p = v.participants.find((x) => x.purpose === 'agent'); // disconnected one
     if (!p) return;
-    if (p.emails) {
+    if (Array.isArray(p.emails) && p.emails.length) {
       addTrackingData1('Conversations', 'email ' + p.emails[0]?.state);
     }
-    if (p.chats) {
+    if (Array.isArray(p.chats) && p.chats.length) {
       addTrackingData1('Conversations', 'chat ' + p.chats[0]?.state);
     }
-    if (p.calls) {
+    if (Array.isArray(p.calls) && p.calls.length) {
       addTrackingData1('Conversations', 'call ' + p.calls[0]?.state);
     }
   };
