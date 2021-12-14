@@ -8,10 +8,12 @@ import queryString from 'query-string';
 import ActivitySelection from './Components/ActivitySelection/ActivitySelection';
 import { Alert, Spin, Table } from 'antd';
 import { setEnv, setOau, getMe } from './Misc/api';
-import { initializeNotifications, registerCallbackFunctionForUserTargets } from './Misc/notifications';
+import { initializeNotifications, registerCallbackFunctionForUserConversations, registerCallbackFunctionForUserTargets } from './Misc/notifications';
 import moment from 'moment';
 
 var trackingData1 = [];
+var lastType = null;
+var lastValue = null;
 
 function App() {
   const env = queryString.parse(window.location.search).env;
@@ -42,18 +44,35 @@ function App() {
   };
 
   const startWatchingUserPresence = async () => {
-    registerCallbackFunctionForUserTargets(presenceCallbackFunc);
+    registerCallbackFunctionForUserTargets(presenceCallbackFunc1);
+    registerCallbackFunctionForUserConversations(conversationCallbackFunc1);
     await initializeNotifications(me.id);
   };
 
-  const presenceCallbackFunc = useCallback((v) => {
-    console.log('[Activity Widget] prsence changed:', v);
-    addTrackingData('Presence', v);
-  });
+  const presenceCallbackFunc1 = (v) => {
+    console.log('[Activity Widget] presence changed:', v);
+    addTrackingData1('Presence', v);
+  };
+
+  const conversationCallbackFunc1 = (v) => {
+    console.log('[Activity Widget] conversation changed:', v);
+    if (!v.participants) return;
+    const p = v.participants.find((x) => x.purpose === 'agent' && !x.endTime);
+    if (!p) return;
+    if (p.emails) {
+      addTrackingData1('Conversations', 'email ' + p.emails[0]?.state);
+    }
+    if (p.chats) {
+      addTrackingData1('Conversations', 'chat ' + p.chats[0]?.state);
+    }
+    if (p.calls) {
+      addTrackingData1('Conversations', 'call ' + p.calls[0]?.state);
+    }
+  };
 
   const handleActivityChange = (v) => {
     console.log('[Activity Widget] activity changed:', v);
-    addTrackingData('Activity', v);
+    addTrackingData1('Activity', v);
   };
 
   const columns = [
@@ -79,8 +98,11 @@ function App() {
     },
   ];
 
-  const addTrackingData = (type, value) => {
-    console.log('[Activity Widget] addTrackingData():', type, value);
+  const addTrackingData1 = (type, value) => {
+    console.log('[Activity Widget] addTrackingData1():', type, value);
+    if (lastType === type && lastValue === value) return;
+    lastType = type;
+    lastValue = value;
     let td = [{ type, value, when: moment() }].concat([...trackingData1]);
     trackingData1 = td;
     setTrackingData(td);
@@ -105,7 +127,7 @@ function App() {
                 </div>
                 <div style={{ marginTop: '24px' }}>
                   History:
-                  <Table columns={columns} dataSource={trackingData} />
+                  <Table columns={columns} dataSource={trackingData} rowKey={(r) => r.when} />
                 </div>
               </>
             )}

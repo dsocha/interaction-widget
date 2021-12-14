@@ -5,6 +5,9 @@ let currentChannel;
 let callbackFunctionForUserTargets = (presence) => {
   console.error('callbackFunctionForUserTargets not registered yet');
 };
+let callbackFunctionForUserConversations = (presence) => {
+  console.error('callbackFunctionForUserConversations not registered yet');
+};
 
 export const initializeNotifications = async (uid) => {
   try {
@@ -14,7 +17,8 @@ export const initializeNotifications = async (uid) => {
     } else {
       currentChannel = channels.entities[0];
     }
-    await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.users.${uid}.presence`]);
+    await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.users.${uid}.presence`, `v2.users.${uid}.conversations`]);
+    // await notificationsPutChannelsSubscriptions(currentChannel.id, [`v2.users.${uid}.conversations`]);
     initializeWebSocket();
   } catch (err) {
     console.error(err);
@@ -39,6 +43,14 @@ const initializeWebSocket = () => {
       }
       // </user presence>
     }
+    if (msg.topicName.includes('v2.users.') && msg.topicName.includes('.conversations')) {
+      // <user presence>
+      const conversation = msg.eventBody;
+      if (conversation) {
+        callbackFunctionForUserConversations(conversation);
+      }
+      // </user presence>
+    }
   };
 
   ws.onclose = (e) => {
@@ -53,4 +65,8 @@ const initializeWebSocket = () => {
 
 export const registerCallbackFunctionForUserTargets = (func) => {
   callbackFunctionForUserTargets = func;
+};
+
+export const registerCallbackFunctionForUserConversations = (func) => {
+  callbackFunctionForUserConversations = func;
 };

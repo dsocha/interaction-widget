@@ -15,7 +15,7 @@ const handleResponse = (response) => {
 const handleError = (resp) => {
   console.error('API call failed: [' + resp.status + '] ' + resp.statusText);
   if (resp.status === 401) {
-    window.location.href = `login.html?en=${apiEnv}&ci=${apiOau}&ta=${encodeURIComponent(`login.html/?env=${apiEnv}`)}`;
+    window.location.href = `login.html?en=${apiEnv}&ci=${apiOau}&ta=${encodeURIComponent(`login.html/?oau=${apiOau}&env=${apiEnv}`)}`;
     return;
   }
   throw new Error(resp.statsuText);
